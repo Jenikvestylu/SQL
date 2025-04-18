@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Textové záznamy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .filter-section {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .add-section {
+      background-color: #e9f7ef;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .delete-btn {
+      background-color: #f44336;
+    }
+    .delete-btn:hover {
+      background-color: #d32f2f;
+    }
+    .record {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    .category-badge {
+      display: inline-block;
+      background-color: #2196F3;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      margin-bottom: 5px;
+    }
+    .record-actions {
+      margin-top: 10px;
+      text-align: right;
+    }
+    .no-records {
+      color: #777;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>Textové záznamy</h1>
+  
+
+  <div class="filter-section">
+    <h2>Filtrování</h2>
+    <form action="/" method="GET">
+      <div class="form-group">
+        <label for="kategorie">Podle kategorie:</label>
+        <select name="kategorie" id="kategorie">
+          <option value="">Všechny kategorie</option>
+          <% dostupneKategorie.forEach(function(kat) { %>
+            <option value="<%= kat.kategorie %>" <% if(vybranaKategorie === kat.kategorie) { %>selected<% } %>>
+              <%= kat.kategorie %>
+            </option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="hledanyText">Hledat v textu:</label>
+        <input type="text" name="hledanyText" id="hledanyText" value="<%= hledanyText %>">
+      </div>
+      <button type="submit">Filtrovat</button>
+    </form>
+  </div>
+  
+  <div class="add-section">
+    <h2>Přidat nový záznam</h2>
+    <form action="/pridat" method="POST">
+      <div class="form-group">
+        <label for="kategorie-nova">Kategorie:</label>
+        <input type="text" name="kategorie" id="kategorie-nova" required 
+               placeholder="např. vtip, citát, plánované, rozdělané, hotové">
+      </div>
+      <div class="form-group">
+        <label for="text">Text:</label>
+        <textarea name="text" id="text" rows="4" required placeholder="Zadejte text záznamu"></textarea>
+      </div>
+      <button type="submit">Přidat záznam</button>
+    </form>
+  </div>
+  
+
+  <h2>Seznam záznamů</h2>
+  
+  <% if (zaznamy.length > 0) { %>
+    <% zaznamy.forEach(function(zaznam) { %>
+      <div class="record">
+        <div class="category-badge"><%= zaznam.kategorie %></div>
+        <p><%= zaznam.text %></p>
+        <div class="record-actions">
+          <form action="/smazat/<%= zaznam.id %>" method="POST" style="display: inline;">
+            <button type="submit" class="delete-btn">Smazat</button>
+          </form>
+        </div>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p class="no-records">Žádné záznamy nenalezeny.</p>
+  <% } %>
+</body>
+</html>
